@@ -1,0 +1,562 @@
+/*
+  Valentine theme + REAL world map background.
+  Map image source: Wikimedia Commons (public domain)
+  https://supermap.world/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcE5CIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--a969b3ee5dca3acc2fc3b933d6801d8c03faacae/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RW5KbGMybDZaVjkwYjE5bWFYUmJCMmtDQUFwcEFnQUsiLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--5aacfc5c6afa72d892e036749ba4495ef757dc1b/404339.png
+*/
+
+:root {
+  --bg-1: #fff3f7;
+  --bg-2: #ffdbe7;
+  --card: rgba(255, 255, 255, 0.92);
+  --primary: #df4d7a;
+  --primary-dark: #bb365f;
+  --accent: #ff7f9f;
+  --text: #5d1f38;
+  --shadow: 0 10px 30px rgba(200, 55, 95, 0.2);
+  --reunion-offset-desktop: 20px;
+  --reunion-offset-mobile: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.map-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  /* Actual world map image */
+  background-image: url("https://supermap.world/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcE5CIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--a969b3ee5dca3acc2fc3b933d6801d8c03faacae/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdCem9MWm05eWJXRjBTU0lJY0c1bkJqb0dSVlE2RW5KbGMybDZaVjkwYjE5bWFYUmJCMmtDQUFwcEFnQUsiLCJleHAiOm51bGwsInB1ciI6InZhcmlhdGlvbiJ9fQ==--5aacfc5c6afa72d892e036749ba4495ef757dc1b/404339.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-color: #ffe0ea;
+  z-index: -2;
+  filter: saturate(1.1) contrast(1.05);
+}
+
+/* Pink tint layer so map matches theme */
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(255, 170, 196, 0.42), rgba(255, 200, 219, 0.45));
+}
+
+.heart-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.heart-layer span {
+  position: absolute;
+  font-size: 1.4rem;
+  animation: heart-float 2.1s ease-in-out infinite;
+}
+
+.heart-layer span:nth-child(1) { left: 44%; top: 44%; animation-delay: 0s; }
+.heart-layer span:nth-child(2) { left: 48%; top: 41%; animation-delay: 0.15s; }
+.heart-layer span:nth-child(3) { left: 52%; top: 45%; animation-delay: 0.3s; }
+.heart-layer span:nth-child(4) { left: 46%; top: 50%; animation-delay: 0.45s; }
+.heart-layer span:nth-child(5) { left: 54%; top: 49%; animation-delay: 0.6s; }
+.heart-layer span:nth-child(6) { left: 50%; top: 53%; animation-delay: 0.75s; }
+
+body.show-hearts .heart-layer {
+  opacity: 1;
+}
+
+.app {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.card {
+  background: var(--card);
+  border: 2px solid #ffc4d8;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+
+.tracker-card {
+  margin-bottom: 14px;
+}
+
+/* While avatars are moving, hide the top tracker card. */
+body.move-mode .tracker-card {
+  display: none;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+  animation: fade-up 0.3s ease;
+}
+
+/*
+  Movement screen:
+  Keep it small and docked near the bottom so map + avatars stay visible.
+*/
+#move-screen.active {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: min(92vw, 420px);
+  padding: 12px 14px;
+  z-index: 3;
+  animation: none;
+}
+
+#move-screen h2 {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+#move-screen p {
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+}
+
+#move-screen .btn {
+  font-size: 0.9rem;
+  padding: 9px 11px;
+}
+
+#no-screen.active {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: min(92vw, 420px);
+  padding: 12px 14px;
+  z-index: 3;
+  animation: none;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+.quiz-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.progress-wrap {
+  width: 100%;
+  height: 12px;
+  background: #ffd9e6;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 0.3s ease;
+}
+
+.answers {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.btn,
+.answer-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-alt {
+  background: #ffc6d8;
+  color: var(--text);
+}
+
+.answer-btn {
+  background: #fff0f5;
+  color: var(--text);
+  border: 2px solid #ffc8d8;
+  text-align: left;
+}
+
+.answer-btn:hover {
+  border-color: var(--accent);
+}
+
+.answer-btn.selected {
+  border-color: var(--primary);
+  background: #ffdfea;
+}
+
+.final-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+
+.response-message {
+  min-height: 24px;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+/* Marker positioning is controlled by JS lat/lon math */
+.marker {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  z-index: 1;
+  text-align: center;
+  transition: left 0.08s linear, top 0.08s linear;
+}
+
+/* At final meetup, keep avatars very close but clearly separated. */
+body.reunion-mode .marker-gf {
+  transform: translate(calc(-50% - var(--reunion-offset-desktop)), -100%);
+}
+
+body.reunion-mode .marker-me {
+  transform: translate(calc(-50% + var(--reunion-offset-desktop)), -100%);
+}
+
+.marker-label {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.86);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #ffc4d8;
+}
+
+/* -------- Image-based avatars -------- */
+.avatar-img {
+  width: 92px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 4px 7px rgba(0, 0, 0, 0.18));
+}
+
+.cry-tears {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  width: 48px;
+  height: 58px;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cry-tears span {
+  position: absolute;
+  font-size: 0.9rem;
+  animation: tear-drop 1s ease-in infinite;
+}
+
+.cry-tears span:nth-child(1) { left: 6px; top: 2px; animation-delay: 0s; }
+.cry-tears span:nth-child(2) { left: 18px; top: 8px; animation-delay: 0.15s; }
+.cry-tears span:nth-child(3) { left: 30px; top: 2px; animation-delay: 0.3s; }
+.cry-tears span:nth-child(4) { left: 9px; top: 16px; animation-delay: 0.45s; }
+.cry-tears span:nth-child(5) { left: 22px; top: 22px; animation-delay: 0.6s; }
+.cry-tears span:nth-child(6) { left: 34px; top: 16px; animation-delay: 0.75s; }
+
+body.cry-mode .cry-tears {
+  opacity: 1;
+}
+
+/* Subtle bounce while markers are moving */
+.marker.is-moving .avatar-img {
+  animation: bounce 0.32s ease-in-out infinite alternate;
+}
+
+.place-label {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #7a2e48;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid #ffc4d8;
+  z-index: 1;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes heart-float {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-14px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-26px) scale(0.95);
+    opacity: 0.2;
+  }
+}
+
+@keyframes tear-drop {
+  0% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(16px);
+    opacity: 0.15;
+  }
+}
+
+/* Envelope page */
+#envelope-screen.active {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  animation: none;
+}
+
+.envelope-box {
+  width: min(60vw, 760px);
+  height: min(60vh, 520px);
+  min-height: 320px;
+  position: relative;
+  background: linear-gradient(180deg, #ffe3ed, #ffd2e2);
+  border: 2px solid #f3a8c3;
+  border-radius: 18px;
+  box-shadow: 0 12px 35px rgba(178, 64, 101, 0.24);
+  overflow: hidden;
+}
+
+.envelope-flap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 58%;
+  background: linear-gradient(180deg, #ffc7da, #ffb7d0);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transition: transform 0.55s ease;
+  z-index: 2;
+}
+
+.heart-open-btn {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ff8eb1, #f76695);
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(182, 64, 103, 0.3);
+  transition: transform 0.18s ease, opacity 0.25s ease;
+}
+
+.heart-open-btn:hover {
+  transform: translate(-50%, -52%) scale(1.06);
+}
+
+.envelope-paper {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 8%;
+  top: 16%;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 18px;
+  z-index: 1;
+  transform: translateY(16%);
+  transition: transform 0.55s ease;
+}
+
+.envelope-note {
+  text-align: center;
+  margin-top: 0;
+}
+
+.envelope-filler {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  font-size: 0.95rem;
+  color: #7d3552;
+  text-align: center;
+}
+
+.envelope-question {
+  margin-top: 26px;
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.envelope-question h2 {
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+  line-height: 1.1;
+  margin-bottom: 10px;
+  color: #8f2e57;
+}
+
+.envelope-choices {
+  width: min(82%, 360px);
+  margin: 0 auto;
+  min-height: auto;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#envelope-yes-btn {
+  position: static;
+}
+
+#envelope-no-btn {
+  position: static;
+}
+
+.envelope-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.envelope-box.open .envelope-flap {
+  transform: rotateX(155deg);
+}
+
+.envelope-box.open .envelope-paper {
+  transform: translateY(0);
+}
+
+.envelope-box.open .heart-open-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.envelope-box.open .envelope-question {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .btn,
+  .answer-btn {
+    font-size: 0.95rem;
+  }
+
+  .avatar-img {
+    width: 72px;
+    height: auto;
+  }
+
+  body.reunion-mode .marker-gf {
+    transform: translate(calc(-50% - var(--reunion-offset-mobile)), -100%);
+  }
+
+  body.reunion-mode .marker-me {
+    transform: translate(calc(-50% + var(--reunion-offset-mobile)), -100%);
+  }
+
+  .envelope-box {
+    width: 88vw;
+    height: 62vh;
+    min-height: 290px;
+  }
+}
+

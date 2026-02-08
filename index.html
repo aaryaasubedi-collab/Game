@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Propose Day</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!--
+    MAP LAYER
+    Real world map image is in CSS as the background.
+  -->
+  <div class="map-bg" aria-hidden="true">
+    <div class="map-overlay"></div>
+    <div id="heart-layer" class="heart-layer">
+      <span>&#x1F496;</span>
+      <span>&#x1F495;</span>
+      <span>&#x1F497;</span>
+      <span>&#x1F498;</span>
+      <span>&#x1F49E;</span>
+      <span>&#x1F493;</span>
+    </div>
+
+    <!-- Girlfriend marker -->
+    <div id="gf-marker" class="marker marker-gf">
+      <img class="avatar-img" src="her.png" alt="Her avatar" />
+      <span class="marker-label">Amit</span>
+    </div>
+
+    <!-- Your marker -->
+    <div id="me-marker" class="marker marker-me">
+      <img class="avatar-img" src="me.png" alt="My avatar" />
+      <span class="cry-tears" aria-hidden="true">
+        <span>&#x1F4A7;</span>
+        <span>&#x1F4A7;</span>
+        <span>&#x1F4A7;</span>
+        <span>&#x1F4A7;</span>
+        <span>&#x1F4A7;</span>
+        <span>&#x1F4A7;</span>
+      </span>
+      <span class="marker-label">Aaryaa</span>
+    </div>
+
+    <!-- Reference location labels -->
+    <div id="label-connecticut" class="place-label">Thapagaun</div>
+    <div id="label-nepal" class="place-label">Sinamangal</div>
+    <div id="label-alaska" class="place-label">Thamel</div>
+  </div>
+
+  <main class="app">
+    <section class="card tracker-card">
+      <h2>What will my answer be?</h2>
+      <p id="move-message">(depends on whether you are a winner)</p>
+    </section>
+
+    <!-- Start screen -->
+    <section id="start-screen" class="card screen active">
+      <p id="start-message">
+        If we meet, I might just answer...!?!?
+      </p>
+      <button id="start-btn" class="btn">Let's see if you're a winner!</button>
+    </section>
+
+    <!-- Quiz screen -->
+    <section id="quiz-screen" class="card screen">
+      <div class="quiz-top">
+        <p id="question-count">Question 1 of 6</p>
+        <p id="score-text">Correct: 0</p>
+      </div>
+
+      <div class="progress-wrap" aria-hidden="true">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+
+      <h2 id="question-text">Question goes here</h2>
+      <div id="answers" class="answers"></div>
+
+      <button id="next-btn" class="btn" disabled>Submit Answer</button>
+    </section>
+
+    <!-- Movement screen (shown after EVERY answer) -->
+    <section id="move-screen" class="card screen">
+      <h2>Travel update</h2>
+      <p id="move-result-text">Watch the avatars move...</p>
+      <button id="move-next-btn" class="btn" disabled>Continue</button>
+    </section>
+
+    <!-- Envelope screen (shown before final valentine question) -->
+    <section id="envelope-screen" class="screen">
+      <div id="envelope-box" class="envelope-box">
+        <div class="envelope-flap"></div>
+        <button id="open-envelope-btn" class="heart-open-btn" aria-label="Open Envelope">&#x1F496;</button>
+        <div class="envelope-paper">
+          <p class="envelope-filler">Now that you know what my favourite activity is.</p>
+          <div id="envelope-question" class="envelope-question">
+            <h2>What do you think is my answer?</h2>
+            <div id="envelope-choices" class="envelope-choices">
+              <button id="envelope-yes-btn" class="btn">Yes ❤️</button>
+              <button id="envelope-no-btn" class="btn btn-alt">No 🙃</button>
+            </div>
+            <p id="envelope-response" class="response-message"></p>
+          </div>
+        </div>
+      </div>
+      <div class="envelope-actions">
+        <button id="to-final-btn" class="btn" disabled>Continue</button>
+      </div>
+    </section>
+
+    <!-- No-path screen -->
+    <section id="no-screen" class="card screen">
+      <h2>Oh no...</h2>
+      <p id="cry-prompt-text">Did my feelings miss the mark?</p>
+      <div id="cry-actions" class="final-actions">
+        <button id="cry-yes-btn" class="btn btn-alt">Yes</button>
+        <button id="cry-no-btn" class="btn">No</button>
+      </div>
+    </section>
+
+    <!-- Final screen -->
+    <section id="final-screen" class="card screen">
+      <h2>We made it to our date spot <3</h2>
+      <p id="final-score"></p>
+      <p id="final-filler">And I am your valentine .</p>
+      <button id="restart-btn" class="btn">Get your answer again</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
